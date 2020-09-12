@@ -16,9 +16,22 @@ const pusher = new Pusher({
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-app.post("/", (req, res) => {
-  pusher.trigger(req.body.channel, "messages", req.body.data);
+app.post("/pusher/auth", (req, res) => {
+  const socketId = req.body.socket_id;
+  const channel = req.body.channel_name;
+  const user = req.query.user;
+
+  const auth = pusher.authenticate(socketId, channel, {
+    user_id: `user-${user}`,
+  });
+
+  return res.send(auth);
+});
+
+app.post("/:channel", (req, res) => {
+  pusher.trigger(req.params.channel, "messages", req.body);
 
   return res.status(204).json(null);
 });
