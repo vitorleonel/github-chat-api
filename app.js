@@ -23,4 +23,4 @@ app.post("/", (req, res) => {
   return res.status(204).json(null);
 });
 
-app.listen(4000, () => console.log("Server started."));
+app.listen(process.env.PORT || 4000, () => console.log("Server started."));
